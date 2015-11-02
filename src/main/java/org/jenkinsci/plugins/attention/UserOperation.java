@@ -16,6 +16,17 @@ public class UserOperation {
         GREEN_BUILD,
     }
 
+    private Date date;
+    private int buildNumber;
+    private String user;
+    private Type type;
+
+    private String volunteer;
+    private boolean volunteer_is_team;
+    private String comment;
+
+    private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
     public static UserOperation volunteerOperation(
             int buildNumber, String user,
             String volunteer, boolean is_team, String comment) {
@@ -54,17 +65,6 @@ public class UserOperation {
     public static UserOperation greenBuildOperation(int buildNumber) {
         return new UserOperation(buildNumber, null, UserOperation.Type.GREEN_BUILD);
     }
-
-    private Date date;
-    private int buildNumber;
-    private String user;
-    private Type type;
-
-    private String volunteer;
-    private boolean volunteer_is_team;
-    private String comment;
-
-    private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
     private UserOperation(int buildNumber, String user, Type type) {
         this.date = new Date();

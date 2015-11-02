@@ -17,16 +17,16 @@ public final class VolunteerHistory {
 
     private static final Logger LOGGER = Logger.getLogger(VolunteerHistory.class.getName());
 
-    private transient File configFile;
+    private transient File historyFile;
 
     private LinkedList<UserOperation> userOperations;
 
     public VolunteerHistory(File configDir) {
-        this.configFile = new File(configDir, "VolunteerHistory.xml");
-        if (configFile.exists()) {
+        this.historyFile = new File(configDir, "VolunteerHistory.xml");
+        if (historyFile.exists()) {
             load();
         } else {
-            userOperations = new LinkedList<UserOperation>();
+            userOperations = new LinkedList<>();
         }
     }
 
@@ -42,17 +42,17 @@ public final class VolunteerHistory {
 
     private synchronized void load() {
         try {
-            new XmlFile(configFile).unmarshal(this);
+            new XmlFile(historyFile).unmarshal(this);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Failed to load "+configFile, e);
+            LOGGER.log(Level.WARNING, "Failed to load "+ historyFile, e);
         }
     }
 
     public synchronized void save() {
         try {
-            new XmlFile(configFile).write(this);
+            new XmlFile(historyFile).write(this);
         } catch (IOException e) {
-            LOGGER.log(Level.WARNING, "Failed to save "+configFile,e);
+            LOGGER.log(Level.WARNING, "Failed to save "+ historyFile,e);
         }
     }
 }
