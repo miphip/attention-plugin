@@ -25,15 +25,17 @@
 						<tr>
 							<th align="left" width="130">Date</th>
 							<th align="left" width="50">Build</th>
-							<th align="left">User operation</th>
+							<th align="left" width="200">User operation</th>
+							<th align="left">Comment</th>
 						</tr>
 					</thead>
 					<tbody>
-					<j:forEach var="op" items="${it.history.userOperations}">
+					<j:forEach var="op" items="${it.history.lastUserOperations}">
 						<tr>
 							<td>${op.displayDate}</td>
 							<td>#${op.buildNumber}</td>
 							<td>${op.displayOperation}</td>
+							<td style="font-style: italic">${op.comment}</td>
 						</tr>
 					</j:forEach>
 					</tbody>

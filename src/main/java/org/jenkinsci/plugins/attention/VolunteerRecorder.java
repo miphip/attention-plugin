@@ -48,13 +48,15 @@ public class VolunteerRecorder extends Recorder {
     @Override
     public final boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
-        VolunteerAction previousAction =
-                build.getPreviousBuild() != null
-                        ? build.getPreviousBuild().getAction(VolunteerAction.class)
-                        : null;
         if (build.getResult().isWorseThan(Result.SUCCESS)) {
+            getHistory(build.getParent()).add(
+                    UserOperation.redBuildOperation(build.getNumber()));
+            VolunteerAction previousAction =
+                    build.getPreviousBuild() != null
+                            ? build.getPreviousBuild().getAction(VolunteerAction.class)
+                            : null;
             build.addAction(new VolunteerAction(build, previousAction));
-        } else if (previousAction != null) {
+        } else {
             getHistory(build.getParent()).add(
                     UserOperation.greenBuildOperation(build.getNumber()));
         }

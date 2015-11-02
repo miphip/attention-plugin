@@ -13,7 +13,7 @@ public class UserOperation {
         VOLUNTEER, UN_VOLUNTEER,
         FIX_SUBMITTED, NO_FIX_SUBMITTED,
         INTERMITTENT, NOT_INTERMITTENT,
-        GREEN_BUILD,
+        GREEN_BUILD, RED_BUILD,
     }
 
     private Date date;
@@ -64,6 +64,10 @@ public class UserOperation {
 
     public static UserOperation greenBuildOperation(int buildNumber) {
         return new UserOperation(buildNumber, null, UserOperation.Type.GREEN_BUILD);
+    }
+
+    public static UserOperation redBuildOperation(int buildNumber) {
+        return new UserOperation(buildNumber, null, UserOperation.Type.RED_BUILD);
     }
 
     private UserOperation(int buildNumber, String user, Type type) {
@@ -135,7 +139,9 @@ public class UserOperation {
             case NOT_INTERMITTENT:
                 return String.format("%s marked issue as not intermittent", user);
             case GREEN_BUILD:
-                return "Green build!";
+                return "Build succeeded!";
+            case RED_BUILD:
+                return "Build failed!";
             default:
                 return "";
         }
