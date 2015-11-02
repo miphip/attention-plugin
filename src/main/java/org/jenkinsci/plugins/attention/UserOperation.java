@@ -16,6 +16,45 @@ public class UserOperation {
         GREEN_BUILD,
     }
 
+    public static UserOperation volunteerOperation(
+            int buildNumber, String user,
+            String volunteer, boolean is_team, String comment) {
+        UserOperation op = new UserOperation(buildNumber, user, UserOperation.Type.VOLUNTEER);
+        op.volunteer = volunteer;
+        op.volunteer_is_team = is_team;
+        op.comment = comment;
+        return op;
+    }
+
+    public static UserOperation unVolunteerOperation(
+            int buildNumber, String user,
+            String volunteer, boolean is_team) {
+        UserOperation op = new UserOperation(buildNumber, user, UserOperation.Type.UN_VOLUNTEER);
+        op.volunteer = volunteer;
+        op.volunteer_is_team = is_team;
+        return op;
+    }
+
+    public static UserOperation fixSubmittedOperation(int buildNumber, String user) {
+        return new UserOperation(buildNumber, user, UserOperation.Type.FIX_SUBMITTED);
+    }
+
+    public static UserOperation noFixSubmittedOperation(int buildNumber, String user) {
+        return new UserOperation(buildNumber, user, UserOperation.Type.NO_FIX_SUBMITTED);
+    }
+
+    public static UserOperation intermittentOperation(int buildNumber, String user) {
+        return new UserOperation(buildNumber, user, UserOperation.Type.INTERMITTENT);
+    }
+
+    public static UserOperation notIntermittentOperation(int buildNumber, String user) {
+        return new UserOperation(buildNumber, user, UserOperation.Type.NOT_INTERMITTENT);
+    }
+
+    public static UserOperation greenBuildOperation(int buildNumber) {
+        return new UserOperation(buildNumber, null, UserOperation.Type.GREEN_BUILD);
+    }
+
     private Date date;
     private int buildNumber;
     private String user;
@@ -27,7 +66,7 @@ public class UserOperation {
 
     private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
-    public UserOperation(int buildNumber, String user, Type type) {
+    private UserOperation(int buildNumber, String user, Type type) {
         this.date = new Date();
         this.buildNumber = buildNumber;
         this.user = user;
@@ -59,26 +98,14 @@ public class UserOperation {
         return volunteer;
     }
 
-    public void setVolunteer(String volunteer) {
-        this.volunteer = volunteer;
-    }
-
     @Exported(visibility = 4)
     public boolean isVolunteer_is_team() {
         return volunteer_is_team;
     }
 
-    public void setVolunteer_is_team(boolean volunteer_is_team) {
-        this.volunteer_is_team = volunteer_is_team;
-    }
-
     @Exported(visibility = 4)
     public String getComment() {
         return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
     }
 
     public String getDisplayDate() {

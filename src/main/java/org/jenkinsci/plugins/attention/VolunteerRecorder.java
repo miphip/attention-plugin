@@ -26,12 +26,12 @@ import org.kohsuke.stapler.StaplerRequest;
 @Extension
 public class VolunteerRecorder extends Recorder {
 
-    private transient VolunteerHistory jobData;
+    private transient VolunteerHistory history;
 
     public VolunteerRecorder() {
-        // can't initialize jobData here since we don't know which job (project)
+        // can't initialize history here since we don't know which job (project)
         // this recorder belongs to yet.
-        jobData = null;
+        history = null;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class VolunteerRecorder extends Recorder {
     @Override
     public Collection<? extends Action> getProjectActions(AbstractProject<?, ?> project) {
         return Collections.singletonList(
-                new VolunteerProjectAction(getJobData(project)));
+                new VolunteerProjectAction(getHistory(project)));
     }
 
     @Override
@@ -55,16 +55,17 @@ public class VolunteerRecorder extends Recorder {
         if (build.getResult().isWorseThan(Result.SUCCESS)) {
             build.addAction(new VolunteerAction(build, previousAction));
         } else if (previousAction != null) {
-            getJobData(build.getParent()).greenBuildOperation(build.getNumber());
+            getHistory(build.getParent()).add(
+                    UserOperation.greenBuildOperation(build.getNumber()));
         }
         return true;
     }
 
-    private synchronized VolunteerHistory getJobData(Job<?, ?> job) {
-        if (jobData == null) {
-            jobData = new VolunteerHistory(job.getRootDir());
+    private synchronized VolunteerHistory getHistory(Job<?, ?> job) {
+        if (history == null) {
+            history = new VolunteerHistory(job.getRootDir());
         }
-        return jobData;
+        return history;
     }
 
     @Extension

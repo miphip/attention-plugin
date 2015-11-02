@@ -36,7 +36,7 @@ public class VolunteerAction implements Action {
     private String intermittentByName = "";
     private ArrayList<DetectedIssue> issues = new ArrayList<>();
 
-    private transient VolunteerHistory jobData;
+    private transient VolunteerHistory history;
 
     public VolunteerAction(Run<?, ?> build, VolunteerAction prevVolunteerAction) {
         this.build = build;
@@ -51,11 +51,11 @@ public class VolunteerAction implements Action {
         }
     }
 
-    private synchronized VolunteerHistory getJobData() {
-        if (jobData == null) {
-            jobData = build.getParent().getAction(VolunteerProjectAction.class).getHistory();
+    private synchronized VolunteerHistory getHistory() {
+        if (history == null) {
+            history = build.getParent().getAction(VolunteerProjectAction.class).getHistory();
         }
-        return jobData;
+        return history;
     }
 
     public boolean showForm() {
@@ -232,9 +232,9 @@ public class VolunteerAction implements Action {
             }
 
             performUnVolunteer(build, toRemove);
-            getJobData().unVolunteerOperation(
+            getHistory().add(UserOperation.unVolunteerOperation(
                     build.getNumber(), User.current().getId(),
-                    toRemove.getId(), toRemove.isTeam());
+                    toRemove.getId(), toRemove.isTeam()));
             getDescriptor().getMailClient().notifyUnVolunteered(toRemove, User.current(), build);
             ReportObject.removeCache(build.getParent());
             return new JavaScriptResponse(id + " was removed", false, volunteers);
@@ -268,9 +268,13 @@ public class VolunteerAction implements Action {
         try {
             updateFixOnTheWayStatus(build, newStatus);
             if (newStatus) {
-                getJobData().fixSubmittedOperation(build.getNumber(), User.current().getId());
+                getHistory().add(
+                        UserOperation.fixSubmittedOperation(
+                                build.getNumber(), User.current().getId()));
             } else {
-                getJobData().noFixSubmittedOperation(build.getNumber(), User.current().getId());
+                getHistory().add(
+                        UserOperation.noFixSubmittedOperation(
+                                build.getNumber(), User.current().getId()));
             }
             return new JavaScriptResponse(getFixSubmittedByName(), false, volunteers);
         } catch (Throwable e) {
@@ -303,9 +307,13 @@ public class VolunteerAction implements Action {
         try {
             updateIntermittentStatus(build, newStatus);
             if (newStatus) {
-                getJobData().intermittentOperation(build.getNumber(), User.current().getId());
+                getHistory().add(
+                        UserOperation.intermittentOperation(
+                                build.getNumber(), User.current().getId()));
             } else {
-                getJobData().notIntermittentOperation(build.getNumber(), User.current().getId());
+                getHistory().add(
+                        UserOperation.notIntermittentOperation(
+                                build.getNumber(), User.current().getId()));
             }
             return new JavaScriptResponse(getIntermittentByName(), false, volunteers);
         } catch (Throwable e) {
@@ -335,9 +343,11 @@ public class VolunteerAction implements Action {
                         volunteers);
             }
             performVolunteer(build, volunteerData, true);
-            getJobData().volunteerOperation(
-                    build.getNumber(), User.current().getId(),
-                    volunteerData.getId(), volunteerData.isTeam(), volunteerData.getComment());
+            getHistory().add(
+                    UserOperation.volunteerOperation(
+                            build.getNumber(), User.current().getId(),
+                            volunteerData.getId(), volunteerData.isTeam(),
+                            volunteerData.getComment()));
             getDescriptor().getMailClient().notifyNewInvestigator(volunteerData, User.current(), build);
             ReportObject.removeCache(build.getParent());
             return new JavaScriptResponse(volunteerData.getFullName() + " was volunteered", false, volunteers);

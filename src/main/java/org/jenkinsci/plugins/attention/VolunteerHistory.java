@@ -30,53 +30,14 @@ public final class VolunteerHistory {
         }
     }
 
-    public void volunteerOperation(
-            int buildNumber, String user,
-            String volunteer, boolean is_team, String comment) {
-        UserOperation op = new UserOperation(buildNumber, user, UserOperation.Type.VOLUNTEER);
-        op.setVolunteer(volunteer);
-        op.setVolunteer_is_team(is_team);
-        op.setComment(comment);
-        addUserOperation(op);
-    }
-
-    public void unVolunteerOperation(
-            int buildNumber, String user,
-            String volunteer, boolean is_team) {
-        UserOperation op = new UserOperation(buildNumber, user, UserOperation.Type.UN_VOLUNTEER);
-        op.setVolunteer(volunteer);
-        op.setVolunteer_is_team(is_team);
-        addUserOperation(op);
-    }
-
-    public void fixSubmittedOperation(int buildNumber, String user) {
-        addUserOperation(new UserOperation(buildNumber, user, UserOperation.Type.FIX_SUBMITTED));
-    }
-
-    public void noFixSubmittedOperation(int buildNumber, String user) {
-        addUserOperation(new UserOperation(buildNumber, user, UserOperation.Type.NO_FIX_SUBMITTED));
-    }
-
-    public void intermittentOperation(int buildNumber, String user) {
-        addUserOperation(new UserOperation(buildNumber, user, UserOperation.Type.INTERMITTENT));
-    }
-
-    public void notIntermittentOperation(int buildNumber, String user) {
-        addUserOperation(new UserOperation(buildNumber, user, UserOperation.Type.NOT_INTERMITTENT));
-    }
-
-    public void greenBuildOperation(int buildNumber) {
-        addUserOperation(new UserOperation(buildNumber, null, UserOperation.Type.GREEN_BUILD));
+    public synchronized void add(UserOperation op) {
+        userOperations.add(op);
+        save();
     }
 
     @Exported(visibility = 3)
     public List<UserOperation> getUserOperations() {
         return Collections.unmodifiableList(userOperations);
-    }
-
-    private synchronized void addUserOperation(UserOperation op) {
-        userOperations.add(op);
-        save();
     }
 
     private synchronized void load() {
