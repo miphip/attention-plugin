@@ -34,7 +34,7 @@ public class VolunteerProjectAction implements Action {
     }
 
     @Exported(visibility = 2)
-    public VolunteerHistory getVolunteerHistory() {
+    public VolunteerHistory getHistory() {
         return history;
     }
 }

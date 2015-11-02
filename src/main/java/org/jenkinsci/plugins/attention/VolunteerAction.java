@@ -53,7 +53,7 @@ public class VolunteerAction implements Action {
 
     private synchronized VolunteerHistory getJobData() {
         if (jobData == null) {
-            jobData = build.getParent().getAction(VolunteerProjectAction.class).getVolunteerHistory();
+            jobData = build.getParent().getAction(VolunteerProjectAction.class).getHistory();
         }
         return jobData;
     }
@@ -318,7 +318,7 @@ public class VolunteerAction implements Action {
     public JavaScriptResponse updateVolunteer(String comment, String volunteerID, boolean isTeam,
             String issueHeader) {
         try {
-            if (volunteerID == "" || volunteerID == null) {
+            if (volunteerID == null || volunteerID.equals("")) {
                 return new JavaScriptResponse("You need to select a user/team to volunteer", true, volunteers);
             }
 
@@ -329,7 +329,7 @@ public class VolunteerAction implements Action {
                 }
             }
             VolunteerCollection volunteerData = new VolunteerCollection(volunteerID, isTeam, comment, issue);
-            if (volunteerData.getId() == "" || volunteerData.getId() == null) {
+            if (volunteerData.getVolunteeredByID() == null || volunteerData.getVolunteeredByID().equals("")) {
                 return new JavaScriptResponse(
                         "Failed to create the volunteer data, the current user ID is either null or empty", true,
                         volunteers);
@@ -383,7 +383,8 @@ public class VolunteerAction implements Action {
         PrintWriter pw = null;
         try {
             sw = new StringWriter();
-            e.printStackTrace(new PrintWriter(sw));
+            pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
             return sw.toString();
         } finally {
             IOUtils.closeQuietly(sw);
